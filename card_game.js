@@ -9,6 +9,87 @@ function getInput(prompt) {
 }
 
 // YOUR CODE STARTS HERE!!
+function buildDeck(){
+  const suits = ["spades", "hearts", "diamonds","clubs"];
+  const ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+  let deck = [];
+  for (let i = 0; i < ranks.length; i++) {
+    for (let j = 0; j < suits.length; j++) {
+      deck.push({"suit": suits[j], "rank": ranks[i], "value": i})
+    }
+  }
+
+  return deck;
+}
+
+const deck = buildDeck();
+
+function shuffle(deck) {
+  let shuffledDeck = deck;
+  let currentIndex = deck.length-1;
+  let temporaryValue;
+  let randomIndex;
+  while (currentIndex !== 0 ) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+      //we save current value to a temporary variable
+    temporaryValue = shuffledDeck[currentIndex];
+      //we replace the current value of shuffledDeck, with the random value generated
+    shuffledDeck[currentIndex] = shuffledDeck[randomIndex];
+      //we replace the random value generated with the original current value we saved in temporaryValue
+    shuffledDeck[randomIndex] = temporaryValue;
+    currentIndex--;
+  }
+
+  return shuffledDeck;
+}
+
+function greet() {
+  let name = getInput("Welcome to the game! What is your name?");
+  console.log(name);
+
+  return name;
+}
+
+function compare(card1, card2){
+  return `${card1.value - card2.value}`
+}
+
+console.log(compare({ suit: 'hearts', rank: 'A', value: 0 },{ suit: 'hearts', rank: 'K', value: 12 }))
+
+function guess(card1, card2){
+  let input = getInput("DO you think the next card will be higher (h) or lower (l) that the current card?");
+  if(input.toLowerCase() === 'h' || input.toLowerCase() === "higher"){
+    return `${compare(card1, card2) < 0}`;
+  }
+  else if (input.toLowerCase() === 'l' || input.toLowerCase() === 'lower'){
+    return `${compare(card1, card2) > -1}`;
+  }
+  else {
+    console.log("You need to get either 'h' or 'l'. You get no points this round")
+    return false;
+  }
+}
+
+function playGame(){
+  let deck = shuffle(buildDeck());
+  let playerName = greet();
+  let score = 0;
+  let currentCard = deck.pop();
+  let nextCard;
+  while (score < 5 && score > deck.length) {
+    nextCard = deck.pop();
+    if(!!guess(currentCard, nextCard)){
+      score ++;
+      console.log(`Congrats ${playerName}! You guessed right! Your score is ${score}`);
+    } else {
+      console.log(`Wrong guess ${playerName}-- no points this round.`)
+    }
+    nextCard = currentCard;
+  }
+  return (deck.length < 1 ? "You are out of cards and out of luck. You may have lost this round, but next time you may be the winner!" : "You won!")
+}
+
+playGame()
 
 // STEP ONE - Building A Deck.
 
