@@ -22,8 +22,6 @@ function buildDeck(){
   return deck;
 }
 
-const deck = buildDeck();
-
 function shuffle(deck) {
   let shuffledDeck = deck;
   let currentIndex = deck.length-1;
@@ -54,18 +52,19 @@ function compare(card1, card2){
   return `${card1.value - card2.value}`
 }
 
-console.log(compare({ suit: 'hearts', rank: 'A', value: 0 },{ suit: 'hearts', rank: 'K', value: 12 }))
+function guess(currentCard, nextCard){
+  console.log(`Current card -- suit: ${currentCard.suit}, rank: ${currentCard.rank}`);
 
-function guess(card1, card2){
-  let input = getInput("DO you think the next card will be higher (h) or lower (l) that the current card?");
-  if(input.toLowerCase() === 'h' || input.toLowerCase() === "higher"){
-    return `${compare(card1, card2) < 0}`;
+  let input = getInput("Do you think the next card will be higher (h) or lower (l) that the current card?");
+
+  if(input.toLowerCase() === 'h'){
+    return `${compare(currentCard, nextCard) < 0}`;
   }
-  else if (input.toLowerCase() === 'l' || input.toLowerCase() === 'lower'){
-    return `${compare(card1, card2) > -1}`;
+  else if (input.toLowerCase() === 'l'){
+    return `${compare(currentCard, nextCard) > 0}`;
   }
   else {
-    console.log("You need to get either 'h' or 'l'. You get no points this round")
+    console.log("You need to enter either 'h' or 'l'. You get no points this round")
     return false;
   }
 }
@@ -76,20 +75,23 @@ function playGame(){
   let score = 0;
   let currentCard = deck.pop();
   let nextCard;
-  while (score < 5 && score > deck.length) {
+
+  while (score < 5 && score < deck.length) {
     nextCard = deck.pop();
-    if(!!guess(currentCard, nextCard)){
+
+    if(guess(currentCard, nextCard) == true){
       score ++;
       console.log(`Congrats ${playerName}! You guessed right! Your score is ${score}`);
     } else {
-      console.log(`Wrong guess ${playerName}-- no points this round.`)
+      console.log(`Wrong guess ${playerName} -- no points this round.`)
     }
-    nextCard = currentCard;
+    currentCard = nextCard;
   }
-  return (deck.length < 1 ? "You are out of cards and out of luck. You may have lost this round, but next time you may be the winner!" : "You won!")
+
+  return deck.length ? "You won!" : "You are out of cards and out of luck. You may have lost this round, but next time you may be the winner!";
 }
 
-playGame()
+console.log(playGame())
 
 // STEP ONE - Building A Deck.
 
